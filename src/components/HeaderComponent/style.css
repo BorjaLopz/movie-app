@@ -13,6 +13,20 @@
   max-width: 400px;
 }
 
+.searchBox h1 {
+  font-size: 48px;
+  text-transform: uppercase;
+  background: #050dff;
+  background: repeating-radial-gradient(
+    ellipse farthest-corner at top right,
+    #050dff 0%,
+    #05acff 100%,
+    #050dff 0%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .searchBox input {
   width: 100%;
   max-width: 400px;
@@ -36,4 +50,18 @@
 .searchBox .searchBtn:hover {
   background-color: #0091ea;
   border: 1px solid #fff;
+}
+
+.navLinks ul {
+  display: flex;
+  flex-direction: row;
+  width: 400px;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.navLinks ul li {
+  list-style: none;
+  text-transform: uppercase;
+  font-size: 1.4rem;
 }

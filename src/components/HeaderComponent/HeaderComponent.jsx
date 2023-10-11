@@ -13,14 +13,21 @@ function HeaderComponent({ handleMovieFilter }) {
   };
 
   return (
-    <div className="Header">
+    <header className="Header">
       <div className="searchBox">
-        <h1>NETFLEX</h1>
+        <h1>Neflis</h1>
+        <nav className="navLinks">
+          <ul>
+            <li>home</li>
+            <li>top movies</li>
+            <li>top series</li>
+          </ul>
+        </nav>
         <form id="searchForm" onSubmit={handleSubmit}>
           <input
             type="text"
             id="searchInput"
-            placeholder="Buscar película ..."
+            placeholder="Buscar película..."
             onChange={inputHandler}
           />
           <button className="searchBtn" type="submit">
@@ -28,7 +35,7 @@ function HeaderComponent({ handleMovieFilter }) {
           </button>
         </form>
       </div>
-    </div>
+    </header>
   );
 }
 

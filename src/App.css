@@ -7,8 +7,18 @@
   box-sizing: border-box;
 }
 
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 90vh;
+}
+
 body {
   color: #fff;
   background-color: #212121;
   padding: 1.5rem;
+}
+
+main {
+  flex: 1;
 }
