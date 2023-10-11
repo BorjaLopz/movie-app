@@ -7,9 +7,6 @@ import { useState } from "react";
 function App() {
   const [movieFiltered, setMovieFiltered] = useState("");
 
-  console.log("movieFiltered desde APP");
-  console.log(movieFiltered);
-
   return (
     <>
       <Header handleInputChange={setMovieFiltered} />

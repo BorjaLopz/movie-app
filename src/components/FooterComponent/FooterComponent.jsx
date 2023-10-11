@@ -2,9 +2,9 @@ import RedesComponents from "../RedesComponents/RedesComponents";
 
 function FooterComponent() {
   return (
-    <div className="Footer">
+    <footer className="Footer">
       <RedesComponents />
-    </div>
+    </footer>
   );
 }
 
