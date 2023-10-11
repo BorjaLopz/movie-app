@@ -7,7 +7,13 @@ function MovieCardsComponents({ movie }) {
         <div className="card">
           <a href="./img-01.jpg" className="cardMedia">
             <img
-              src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
+              src={`${
+                movie.poster_path === null
+                  ? `/public/comingSoon.svg`
+                  : `https://image.tmdb.org/t/p/w500/${movie.poster_path}`
+              }`}
+              // src={`/public/comingSoon.svg`}
+              // src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
               alt={`${movie.title}`}
               width={`100%`}
             />
