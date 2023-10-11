@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./style.css";
 import RenderMovies from "../RenderMovies/RenderMovies";
+import LoadMoreElementsComponent from "../LoadMoreElementsComponent/LoadMoreElementsComponent";
 
 const options = {
   method: "GET",
@@ -18,30 +19,70 @@ function MainComponent({ movieFiltered }) {
   const [topMovies, setTopMovies] = useState({});
   const [movieCardsToSee, setMovieCardsToSee] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [filteredPage, setFilteredPage] = useState(1);
 
-  const handleSetCurrentPage = () => {
-    console.log("HOLA HOLA HOLA");
-    if (topMovies.page < topMovies.total_pages) {
-      setCurrentPage(currentPage + 1);
+  // const handleSetCurrentPage = (data) => {
+  //   if (data.page < data.total_pages) {
+  //     setCurrentPage(currentPage + 1);
+  //   }
+  // };
+
+  const handleSetCurrentPage = (data, isFilteredData) => {
+    const newPage = data.page + 1;
+    if (isFilteredData) {
+      setFilteredPage(newPage);
+      fetchFilteredData(newPage);
+    } else {
+      setCurrentPage(newPage);
+      fetchTopMovies(newPage);
     }
   };
 
-  const fetchFilteredData = async () => {
+  const fetchFilteredData = async (newPage) => {
+    // try {
+    //   const resp = await fetch(
+    //     `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${movieFiltered}&language=es&page=${newPage}`
+    //   );
+    //   const data = await resp.json();
+    //   // setCurrentPage(1);
+    //   setMoviesFiltered(data);
+    //   if (data.page === 1) {
+    //     setMovieCardsToSee(data.results);
+    //   } else {
+    //     setMovieCardsToSee((prevMovieCards) => [
+    //       ...prevMovieCards,
+    //       ...data.results,
+    //     ]);
+    //   }
+    // } catch (e) {
+    //   console.log("Error. Couldn't fetch data. ", e.message);
+    // }
     try {
       const resp = await fetch(
-        `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${movieFiltered}&language=es`
+        `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${movieFiltered}&language=es&page=${newPage}`
       );
       const data = await resp.json();
+
       setMoviesFiltered(data);
+      if (data.page === 1) {
+        setMovieCardsToSee(data.results);
+        // setCurrentPage(1);
+      } else {
+        setMovieCardsToSee((prevMovieCards) => [
+          ...prevMovieCards,
+          ...data.results,
+        ]);
+        // setCurrentPage(1);
+      }
     } catch (e) {
       console.log("Error. Couldn't fetch data. ", e.message);
     }
   };
 
-  const fetchTopMovies = async () => {
+  const fetchTopMovies = async (newPage) => {
     try {
       const resp = await fetch(
-        `https://api.themoviedb.org/3/movie/top_rated?language=es&page=${currentPage}`,
+        `https://api.themoviedb.org/3/movie/top_rated?language=es&page=${newPage}`,
         options
       );
       const data = await resp.json();
@@ -49,11 +90,13 @@ function MainComponent({ movieFiltered }) {
       setTopMovies(data);
       if (data.page === 1) {
         setMovieCardsToSee(data.results);
+        // setCurrentPage(1);
       } else {
         setMovieCardsToSee((prevMovieCards) => [
           ...prevMovieCards,
           ...data.results,
         ]);
+        // setCurrentPage(1);
       }
     } catch (e) {
       console.log("Error. Couldn't fetch data. ", e.message);
@@ -61,51 +104,66 @@ function MainComponent({ movieFiltered }) {
   };
 
   useEffect(() => {
-    fetchFilteredData();
-  }, [movieFiltered]);
+    if (movieFiltered) {
+      // Si hay una búsqueda, llama a fetchFilteredData solo una vez al inicio y cuando cambia movieFiltered
+      fetchFilteredData(1);
+    } else {
+      // Si no hay búsqueda, llama a fetchTopMovies solo una vez al inicio y cuando cambia currentPage
+      fetchTopMovies(currentPage);
+    }
+  }, [movieFiltered, currentPage]);
+
+  // useEffect(() => {
+  //   fetchFilteredData();
+  // }, [movieFiltered]);
+
+  // useEffect(() => {
+  //   fetchTopMovies();
+  //   fetchFilteredData();
+  // }, [currentPage]);
 
   // useEffect(() => {
   //   fetchTopMovies();
   // }, []);
 
-  console.log("movieCardsToSee");
-  console.log(movieCardsToSee);
-
-  useEffect(() => {
-    fetchTopMovies();
-  }, [currentPage]);
+  // console.log("movieCardsToSee");
+  // console.log(movieCardsToSee);
+  // console.log("movieFiltered");
+  // console.log(movieFiltered);
 
   return (
     <main className="Main">
       <section id="sectionMoviesFiltered">
-        {/* Si tenemos algo en la busqueda de peliculas */}
-        {moviesFiltered?.total_results !== 0 && (
-          <RenderMovies
-            data={moviesFiltered}
-            render={movieCardsToSee}
-            setPage={setCurrentPage}
-            page={currentPage}
-            handleSetCurrentPage={handleSetCurrentPage}
+        {movieFiltered ? (
+          // Mostrar películas filtradas
+          moviesFiltered?.total_results !== 0 && (
+            <RenderMovies
+              render={movieCardsToSee}
+              moviesFiltered={moviesFiltered}
+            />
+          )
+        ) : (
+          // Mostrar las películas por defecto (topMovies)
+          <RenderMovies render={movieCardsToSee} />
+        )}
+      </section>
+      <section id="loadMoreBtn">
+        {movieFiltered ? (
+          //Load more de movieFiltered
+          moviesFiltered?.page !== moviesFiltered?.total_pages && (
+            <LoadMoreElementsComponent
+              handleSetCurrentPage={() =>
+                handleSetCurrentPage(moviesFiltered, true)
+              }
+            />
+          )
+        ) : (
+          //Load more de topMovies
+          <LoadMoreElementsComponent
+            handleSetCurrentPage={() => handleSetCurrentPage(topMovies, false)}
           />
         )}
-
-        {/* Si no tenemos nada en la busqueda, queremos mostrar el top de peliculas */}
-        {
-          <RenderMovies
-            data={topMovies}
-            render={movieCardsToSee}
-            setPage={setCurrentPage}
-            page={currentPage}
-            handleSetCurrentPage={handleSetCurrentPage}
-          />
-        }
       </section>
-
-      {/* <PaginationComponent
-        data={moviesFiltered}
-        currentPage={moviesFiltered.page}
-        totalPages={moviesFiltered.total_pages}
-      /> */}
     </main>
   );
 }

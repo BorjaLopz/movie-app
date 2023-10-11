@@ -1,23 +1,25 @@
-import LoadMoreElementsComponent from "../LoadMoreElementsComponent/LoadMoreElementsComponent";
 import MovieCardsComponents from "../MovieCardsComponent/MovieCardsComponent";
 
-function RenderMovies({ data, render, setPage, page, handleSetCurrentPage }) {
-  return (
-    <>
-      {render.map((m) => {
-        return <MovieCardsComponents movie={m} />;
-      })}
-
-      {data?.page !== data?.total_pages && (
-        <LoadMoreElementsComponent
-          data={data}
-          setPage={setPage}
-          page={page}
-          handleSetCurrentPage={handleSetCurrentPage}
-        />
-      )}
-    </>
-  );
+function RenderMovies({ render, moviesFiltered = {} }) {
+  console.log("render");
+  console.log(render);
+  if (JSON.stringify(moviesFiltered) !== "{}") {
+    return (
+      <>
+        {render.map((m, id) => {
+          return <MovieCardsComponents movie={m} key={id} />;
+        })}
+      </>
+    );
+  } else {
+    return (
+      <>
+        {render.map((m, id) => {
+          return <MovieCardsComponents movie={m} key={id} />;
+        })}
+      </>
+    );
+  }
 }
 
 export default RenderMovies;
