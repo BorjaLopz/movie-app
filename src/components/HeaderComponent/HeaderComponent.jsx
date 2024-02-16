@@ -15,13 +15,13 @@ function HeaderComponent({ handleMovieFilter }) {
   return (
     <header className="Header">
       <div className="searchBox">
-        <h1>Neflis</h1>
+        <h1>MovieDB</h1>
         <nav className="navLinks">
-          <ul>
+          {/* <ul>
             <li>home</li>
             <li>top movies</li>
             <li>top series</li>
-          </ul>
+          </ul> */}
         </nav>
         <form id="searchForm" onSubmit={handleSubmit}>
           <input
